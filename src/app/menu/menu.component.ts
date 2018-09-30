@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { Dish } from '../shared/dish';
 
-
-
 const DISHES: Dish[] = [
   {
     name: 'Uthappizza',
