@@ -68,7 +68,8 @@ export class DishdetailComponent implements OnInit {
     this.commentForm = this.fb.group({
       author: ['', [Validators.required, Validators.minLength(2)]],
       rating: 5,
-      comment: ['', [Validators.required]]
+      comment: ['', [Validators.required]],
+      data: ''
     });
 
     this.commentForm.valueChanges
@@ -94,18 +95,23 @@ export class DishdetailComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  onSubmit(data: any) {
     this.comment = this.commentForm.value;
     console.log(this.comment);
     this.commentForm.reset({
       author: '',
       rating: 5,
-      comment: ''
+      comment: '',
+      date: ''
     });
     this.commentFormDirective.resetForm({
       author: '',
       rating: 5,
-      comment: ''
+      comment: '',
+      date: ''
     });
+    var d = new Date();
+    data.date = d.toISOString();
+    this.dish.comments.push(data);
   }
 }

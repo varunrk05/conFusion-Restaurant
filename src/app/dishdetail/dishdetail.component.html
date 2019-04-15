@@ -44,8 +44,13 @@
           <p matLine>{{ comment.rating }} Stars</p>
           <p matLine>--{{comment.author}} {{comment.date | date}}</p>
         </mat-list-item>
+        <mat-list-item *ngIf="commentForm.valid">
+          <p matLine>{{ commentForm.value.comment }}</p>
+          <p matLine>{{ commentForm.value.rating }} Stars</p>
+          <p matLine>--{{commentForm.value.author}} {{commentForm.value.date | date}}</p>
+        </mat-list-item>
       </mat-list>
-      <form [formGroup]="commentForm" #cform="ngForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="commentForm" #cform="ngForm" (ngSubmit)="onSubmit(commentForm.value)">
         <p>
           <mat-form-field class="full-width">
             <input matInput formControlName="author" placeholder="Author" type="text">
