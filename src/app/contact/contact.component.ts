@@ -14,7 +14,7 @@ export class ContactComponent implements OnInit {
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
 
-  formErrors = {
+  formErrors = {  //If error is detected, then string containing the error will be added to this object
     'firstname': '',
     'lastname': '',
     'telnum': '',

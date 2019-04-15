@@ -1,4 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Comment } from '../shared/comment';
 
 import { DishService } from '../services/dish.service';
 import { Params, ActivatedRoute } from '@angular/router';
@@ -20,9 +22,16 @@ export class DishdetailComponent implements OnInit {
   prev: string;
   next: string;
 
+  commentForm: FormGroup;
+  comment: Comment;
+  //@ViewChild('cform') feedbackFormDirective;
+
   constructor(private dishService: DishService,
     private route: ActivatedRoute,
-    private location: Location) { }
+    private location: Location,
+    private fb: FormBuilder) { 
+      this.createForm();
+    }
 
   ngOnInit() {
     this.dishService.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
@@ -38,5 +47,29 @@ export class DishdetailComponent implements OnInit {
 
   goBack() : void {
     this.location.back();
+  }
+
+  createForm() {
+    this.commentForm = this.fb.group({
+      author: '',
+      rating: 5,
+      comment: ''
+    });
+
+    // this.commentForm.valueChanges
+    //   .subscribe(data => this.onValueChanged(data));
+
+    // this.onValueChanged();
+  }
+
+  onSubmit() {
+    this.comment = this.commentForm.value;
+    console.log(this.comment);
+    this.commentForm.reset({
+      author: '',
+      rating: 5,
+      comment: ''
+    });
+    //this.feedBackFormDirective.resetForm();
   }
 }
