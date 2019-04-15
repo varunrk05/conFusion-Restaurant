@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Comment } from '../shared/comment';
 
 import { DishService } from '../services/dish.service';
@@ -24,7 +24,7 @@ export class DishdetailComponent implements OnInit {
 
   commentForm: FormGroup;
   comment: Comment;
-  //@ViewChild('cform') feedbackFormDirective;
+  @ViewChild('cform') commentFormDirective;
 
   constructor(private dishService: DishService,
     private route: ActivatedRoute,
@@ -49,17 +49,49 @@ export class DishdetailComponent implements OnInit {
     this.location.back();
   }
 
+  formErrors = {
+    'author': '',
+    'comment': ''
+  };
+
+  validationMessages = {
+    'author': {
+      'required': 'Author name is required',
+      'minlength': 'Author name must be atleast 2 characters long'
+    },
+    'comment': {
+      'required': 'Comment is required'
+    }
+  };
+
   createForm() {
     this.commentForm = this.fb.group({
-      author: '',
+      author: ['', [Validators.required, Validators.minLength(2)]],
       rating: 5,
-      comment: ''
+      comment: ['', [Validators.required]]
     });
 
-    // this.commentForm.valueChanges
-    //   .subscribe(data => this.onValueChanged(data));
+    this.commentForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
 
-    // this.onValueChanged();
+    this.onValueChanged();
+  }
+
+  onValueChanged(data?: any) {
+    if(!this.commentForm) { return; }
+    const form = this.commentForm;
+    for(const field in this.formErrors) {
+      if(this.formErrors.hasOwnProperty(field)) {
+        this.formErrors[field] = '';
+        const control = form.get(field);
+        if(control && control.dirty && !control.valid) {
+          const messages = this.validationMessages[field];
+          for(const key in control.errors) {
+            this.formErrors[field] += messages[key] + ' ';
+          }
+        }
+      }
+    }
   }
 
   onSubmit() {
@@ -70,6 +102,10 @@ export class DishdetailComponent implements OnInit {
       rating: 5,
       comment: ''
     });
-    //this.feedBackFormDirective.resetForm();
+    this.commentFormDirective.resetForm({
+      author: '',
+      rating: 5,
+      comment: ''
+    });
   }
 }
