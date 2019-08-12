@@ -12,7 +12,7 @@ export class ContactComponent implements OnInit {
   feedbackForm: FormGroup;
   feedback: Feedback;
   contactType = ContactType;
-  @ViewChild('fform') feedbackFormDirective;
+  @ViewChild('fform') feedbackFormDirective; //feedbackFormDirective is used to acces the template of the form which can be later used to reset the form
 
   formErrors = {  //If error is detected, then string containing the error will be added to this object
     'firstname': '',
