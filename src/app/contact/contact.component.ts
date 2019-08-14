@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 
-import { flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+
+import { flyInOut, expand } from '../animations/app.animation';
 
 @Component({
   selector: 'app-contact',
@@ -13,15 +15,28 @@ import { flyInOut } from '../animations/app.animation';
     'style': 'display: block'
   },
   animations: [
-    flyInOut()
+    flyInOut(),
+    expand()
   ]
 })
 export class ContactComponent implements OnInit {
 
+  //flag: boolean;
+  errMess: string;
   feedbackForm: FormGroup;
   feedback: Feedback;
+  receivedFeedback: Feedback;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective; //feedbackFormDirective is used to acces the template of the form which can be later used to reset the form
+
+  constructor(private fb: FormBuilder,
+    @Inject('BaseURL') private baseURL,
+    private feedbackService: FeedbackService) { 
+    this.createForm();
+  }
+
+  ngOnInit() {
+  }
 
   formErrors = {  //If error is detected, then string containing the error will be added to this object
     'firstname': '',
@@ -50,13 +65,6 @@ export class ContactComponent implements OnInit {
       'email':         'Email not in valid format.'
     },
   };
-
-  constructor(private fb: FormBuilder) { 
-    this.createForm();
-  }
-
-  ngOnInit() {
-  }
 
   createForm(){
     this.feedbackForm = this.fb.group({
@@ -96,8 +104,29 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit(){
+    this.feedback=null;
+    this.receivedFeedback=null;
+    // console.log(this.feedback);
+    // console.log(this.receivedFeedback);
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
+    document.getElementById('form-fin').style.display = "none"
+    // console.log(this.feedback);
+    this.feedbackService.submitFeedback(this.feedback)
+      .subscribe(receivedfeedback => {
+        this.receivedFeedback = receivedfeedback,
+        // document.getElementById('form-fin').style.display = "none",
+        setTimeout(function(){
+          document.getElementById('form-fin').style.display = "block";
+          document.getElementById('subm-fin').style.display = "none";
+          this.receivedFeedback=null; 
+          this.feedback = null;
+          console.log("inside");
+        }, 5000)
+      },
+      errmess => {
+        this.errMess = <any>errmess;
+      });
+    console.log("reset");
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
@@ -107,6 +136,7 @@ export class ContactComponent implements OnInit {
       contacttype: 'None',
       message: ''
     });
+    console.log("resetform");
     this.feedbackFormDirective.resetForm();
   }
 

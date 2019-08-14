@@ -36,11 +36,12 @@
     </div>
   </div>
 
-  <div fxFlex fxFlexOffset = "20px"  class="form-size">
+  <div fxFlex fxFlexOffset = "20px"  class="form-size" id="fin-form">
     <h3>Send us your feedback</h3>
-    <p>{{ feedbackForm.value | json }} {{ feedbackForm.status | json }}</p>
+    <!-- <p>{{ feedbackForm.value | json }} {{ feedbackForm.status | json }}</p> -->
 
-    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()">
+    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()" id="form-fin" [hidden]="!receivedFeedback && feedback" [@expand]>
+        <!-- [hidden]="!receivedFeedback && feedback" -->
       <p>
         <mat-form-field class="half-width">
           <input matInput formControlName="firstname" placeholder="First Name" type="text" required>
@@ -59,9 +60,9 @@
         <mat-form-field class="half-width">
           <input matInput formControlName="telnum" placeholder="Tel. Number" type="tel" pattern="[0-9]*" required>
           <mat-error *ngIf="formErrors.telnum">
-            {{ formErrors.telnum }}
           </mat-error>
         </mat-form-field>
+          {{ formErrors.telnum }}
         <mat-form-field class="half-width">
           <input matInput formControlName="email" placeholder="Email" type="email" email required>
           <mat-error *ngIf="formErrors.email">
@@ -88,5 +89,18 @@
       </p>
       <button type="submit" mat-button class="background-primary text-floral-white" [disabled]="feedbackForm.invalid">Submit</button>
     </form>
+  </div>
+  <div [hidden]="!feedback || receivedFeedback || errmess">
+    <mat-spinner></mat-spinner><h4>Submitting Form</h4>
+  </div>
+  <div id="fin-subm" *ngIf="receivedFeedback" [hidden]="!feedback && receivedFeedback" [@expand] id = "subm-fin">
+    <h3>Your submission</h3>
+    <p>First Name: {{ receivedFeedback.firstname }}</p>
+    <p>Last Name: {{ receivedFeedback.lastname }}</p>
+    <p>Tel. Number: {{ receivedFeedback.telnum }}</p>
+    <p>Email: {{receivedFeedback.email}}</p>
+    <p>Contact You?: {{receivedFeedback.agree}}</p>
+    <p>How?: {{ receivedFeedback.contacttype }}</p>
+    <p>Feedback: {{ receivedFeedback.message }}</p>
   </div>
 </div>
